@@ -55,6 +55,9 @@ app.get('/touristblogs', async(req,res) =>{
 app.get('/booking', async(req,res) =>{
     res.send(await bookingsCollection.find().toArray())
     })
+app.get('/MyWishlist', async(req,res) =>{
+    res.send(await MyWishlistCollection.find().toArray())
+    })
 
 
 // get single item  
