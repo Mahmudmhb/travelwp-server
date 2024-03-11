@@ -59,6 +59,13 @@ app.get('/MyWishlist', async(req,res) =>{
     res.send(await MyWishlistCollection.find().toArray())
     })
 
+    // get multipule item 
+    app.get('/MyWishlist/:email', async(req,res) =>{
+      const email = req.params.email
+      const query ={userEmail: email}
+      // console.log(email, query)
+      res.send(await MyWishlistCollection.find(query).toArray())
+    })
 
 // get single item  
 app.get('/packages/:id', async(req,res)=>{
@@ -95,6 +102,13 @@ app.post('/booking', async(req,res)=>{
 
 })
   
+
+// delete items 
+app.delete('/mywishlist/:id', async(req, res)=>{
+  const id = req.params.id
+  const query = {_id: new ObjectId(id)}
+  res.send(await MyWishlistCollection.deleteOne(query))
+})
 
   } finally {
     // Ensures that the client will close when you finish/error
