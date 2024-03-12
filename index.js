@@ -41,6 +41,7 @@ const tourGaideCollection =client.db('travelwp').collection('tourgaide')
 const touristBlogsCollection =client.db('travelwp').collection('touristblogs')
 const MyWishlistCollection =client.db('travelwp').collection('MyWishlist')
 const bookingsCollection =client.db('travelwp').collection('booking')
+const usersCollection =client.db('travelwp').collection('users')
 
 // get items 
 app.get('/packages', async(req,res)=>{
@@ -58,6 +59,9 @@ app.get('/booking', async(req,res) =>{
 app.get('/MyWishlist', async(req,res) =>{
     res.send(await MyWishlistCollection.find().toArray())
     })
+app.get('/users', async(req,res) =>{
+    res.send(await usersCollection.find().toArray())
+    })
 
     // get multipule item 
     app.get('/MyWishlist/:email', async(req,res) =>{
@@ -65,6 +69,18 @@ app.get('/MyWishlist', async(req,res) =>{
       const query ={userEmail: email}
       // console.log(email, query)
       res.send(await MyWishlistCollection.find(query).toArray())
+    })
+    app.get('/booking/:email', async(req,res) =>{
+      const email = req.params.email
+      const query ={touristEmail: email}
+      // console.log(email, query)
+      res.send(await bookingsCollection.find(query).toArray())
+    })
+    app.get('/bookings/:guide', async(req,res) =>{
+      const find = req.params.guide
+      const query ={gaideName: find}
+      console.log(find, query)
+      res.send(await bookingsCollection.find(query).toArray())
     })
 
 // get single item  
@@ -85,7 +101,7 @@ app.get('/touristblogs/:id', async(req,res)=>{
 })
 
 
-// post tourist blogs 
+// post  Collection 
 app.post('/touristblogs', async(req,res)=>{
   const blogs = req.body;
   res.send(await touristBlogsCollection.insertOne(blogs))
@@ -100,6 +116,16 @@ app.post('/booking', async(req,res)=>{
   const booking = req.body;
   res.send(await bookingsCollection.insertOne(booking))
 
+})
+
+app.post('/users', async(req, res)=>{
+  const user = req.body
+  const query = {email: user.email}
+  const existingUser = await usersCollection.findOne(query)
+  if(existingUser){
+    return res.send({message: 'user already have', insertId:null})
+  }
+  res.send(await usersCollection.insertOne(user))
 })
   
 
