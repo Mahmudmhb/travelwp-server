@@ -76,10 +76,16 @@ app.get('/users', async(req,res) =>{
       // console.log(email, query)
       res.send(await bookingsCollection.find(query).toArray())
     })
+    app.get('/users/:email', async(req,res) =>{
+      const email = req.params.email
+      const query ={email: email}
+      // console.log(email, query)
+      res.send(await usersCollection.find(query).toArray())
+    })
     app.get('/bookings/:guide', async(req,res) =>{
       const find = req.params.guide
       const query ={gaideName: find}
-      console.log(find, query)
+      // console.log(find, query)
       res.send(await bookingsCollection.find(query).toArray())
     })
 
@@ -135,6 +141,59 @@ app.delete('/mywishlist/:id', async(req, res)=>{
   const query = {_id: new ObjectId(id)}
   res.send(await MyWishlistCollection.deleteOne(query))
 })
+
+
+
+
+//  update admin 
+app.put('/users/:id', async(req,res)=>{
+  const user = req.body;
+  // console.log(user.Admin)
+  const id = req.params.id;
+  const query = {_id: new ObjectId(id)}
+  const options = { upsert: true };
+
+  if(user.Admin){
+   const role = user.Admin;
+   const updateDoc = {
+     $set: {
+       role: role,
+      //  role: user.Guide
+     },
+    }
+    res.send(await usersCollection.updateOne(query, updateDoc, options))
+    // console.log(updateDoc)
+  };
+  if(user.Guide){
+   const updateDoc = {
+     $set: {
+      //  role: role,
+       role: user.Guide
+     },
+    }
+    res.send(await usersCollection.updateOne(query, updateDoc, options))
+    console.log(updateDoc)
+  };
+})
+
+
+app.put('/bookings/:id', async(req,res)=>{
+  const guide = req.body
+  const id = req.params.id;
+  const query = {_id: new ObjectId(id)}
+  const options = { upsert: true };
+
+  const updateDoc = {
+    $set: {
+     //  role: role,
+     status: guide.status
+    }
+   }
+   res.send(await bookingsCollection.updateOne(query, updateDoc, options))
+    console.log(updateDoc)
+
+})
+
 
   } finally {
     // Ensures that the client will close when you finish/error
